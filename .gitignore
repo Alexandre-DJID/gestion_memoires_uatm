@@ -1,0 +1,47 @@
+# ============================================================================
+# Fichiers et dossiers à ignorer par Git
+# ============================================================================
+
+# Dossier des uploads (fichiers utilisateur)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Fichiers de configuration sensibles
+.env
+.env.local
+.env.*.local
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Fichiers PHP temporaires
+*.php~
+*.phtml~
+
+# Fichiers de log
+*.log
+logs/
+
+# Dossier node_modules (si utilisé pour build assets)
+node_modules/
+package-lock.json
+
+# Dossier vendor (si utilisé avec Composer)
+vendor/
+
+# Fichiers temporaires du système
+*.tmp
+*.temp
+
+# Fichiers de cache (Symfony, Laravel, etc.)
+.cache/
+var/
+
+# OS
+.gitkeep

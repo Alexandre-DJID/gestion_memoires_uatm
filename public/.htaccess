@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # On définit la base pour éviter les conflits de sous-dossiers
+    RewriteBase /gestion_memoires_uatm/public/
+
+    # Si le fichier ou le dossier demandé existe physiquement (ex: CSS, JS, images), on le laisse passer
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Sinon, on redirige tout vers le Front Controller (index.php)
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

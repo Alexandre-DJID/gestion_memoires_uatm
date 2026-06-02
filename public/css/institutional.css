@@ -1,0 +1,498 @@
+/**
+ * Charte graphique institutionnelle UATM
+ * Fond uni, pas de dégradés — bleu / rouge du logo
+ */
+:root {
+    --uatm-bg: #F4F4F4;
+    --uatm-surface: #FFFFFF;
+    --uatm-primary: #1E4F8C;
+    --uatm-primary-hover: #163A66;
+    --uatm-accent: #B22234;
+    --uatm-text: #1A1A1A;
+    --uatm-text-muted: #5C5C5C;
+    --uatm-border: #D8D8D8;
+    --uatm-success: #2D6A4F;
+    --uatm-warning: #B8860B;
+    --uatm-info: #1E4F8C;
+    --uatm-radius: 4px;
+    --uatm-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --uatm-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.uatm-body {
+    font-family: var(--uatm-font);
+    background: var(--uatm-bg);
+    color: var(--uatm-text);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+/* ——— Header institutionnel ——— */
+.site-header {
+    background: var(--uatm-surface);
+    border-bottom: 1px solid var(--uatm-border);
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--uatm-shadow);
+}
+
+.site-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.site-header__logo {
+    height: 56px;
+    width: auto;
+    display: block;
+}
+
+.site-header__user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.9rem;
+}
+
+.site-header__name {
+    color: var(--uatm-text-muted);
+    font-weight: 500;
+}
+
+.site-header__name strong {
+    color: var(--uatm-text);
+    font-weight: 600;
+}
+
+.site-header__logout {
+    color: var(--uatm-primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 6px 0;
+    border-bottom: 1px solid transparent;
+}
+
+.site-header__logout:hover {
+    border-bottom-color: var(--uatm-primary);
+}
+
+/* ——— Layout ——— */
+.uatm-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+}
+
+.uatm-page-header {
+    margin-bottom: 24px;
+}
+
+.uatm-page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--uatm-text);
+    letter-spacing: -0.02em;
+}
+
+.uatm-page-subtitle {
+    font-size: 0.9rem;
+    color: var(--uatm-text-muted);
+    margin-top: 4px;
+}
+
+/* ——— Cartes & surfaces ——— */
+.uatm-card {
+    background: var(--uatm-surface);
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    box-shadow: var(--uatm-shadow);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+/* ——— Boutons ——— */
+.uatm-btn {
+    display: inline-block;
+    padding: 10px 18px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--uatm-radius);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.uatm-btn-primary {
+    background: var(--uatm-primary);
+    color: #fff;
+    border-color: var(--uatm-primary);
+}
+
+.uatm-btn-primary:hover {
+    background: var(--uatm-primary-hover);
+    border-color: var(--uatm-primary-hover);
+}
+
+.uatm-btn-secondary {
+    background: var(--uatm-surface);
+    color: var(--uatm-primary);
+    border-color: var(--uatm-border);
+}
+
+.uatm-btn-secondary:hover {
+    border-color: var(--uatm-primary);
+    background: #f8fafc;
+}
+
+.uatm-btn-success {
+    background: var(--uatm-surface);
+    color: var(--uatm-success);
+    border-color: var(--uatm-border);
+}
+
+.uatm-btn-success:hover {
+    border-color: var(--uatm-success);
+}
+
+/* ——— Formulaires ——— */
+.uatm-form-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.uatm-input,
+.uatm-select {
+    padding: 10px 12px;
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: var(--uatm-surface);
+    color: var(--uatm-text);
+}
+
+.uatm-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.uatm-input:focus,
+.uatm-select:focus {
+    outline: none;
+    border-color: var(--uatm-primary);
+    box-shadow: 0 0 0 2px rgba(30, 79, 140, 0.15);
+}
+
+/* ——— Tableaux ——— */
+.uatm-table-wrap {
+    background: var(--uatm-surface);
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    box-shadow: var(--uatm-shadow);
+    overflow: hidden;
+}
+
+.uatm-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.uatm-table thead {
+    background: var(--uatm-primary);
+    color: #fff;
+}
+
+.uatm-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.uatm-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--uatm-border);
+    font-size: 0.9rem;
+    color: var(--uatm-text);
+}
+
+.uatm-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.uatm-table tbody tr:hover {
+    background: #FAFAFA;
+}
+
+/* ——— Statuts ——— */
+.uatm-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: var(--uatm-radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.uatm-status--1 { background: #EEEEEE; color: #555; }
+.uatm-status--2 { background: #E8EEF5; color: var(--uatm-primary); }
+.uatm-status--3 { background: #E8F5EE; color: var(--uatm-success); }
+.uatm-status--4 { background: #FCE8EA; color: var(--uatm-accent); }
+.uatm-status--5 { background: #EEEEEE; color: #555; }
+
+/* ——— KPI Dashboard ——— */
+.uatm-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.uatm-kpi {
+    background: var(--uatm-surface);
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    padding: 20px;
+    box-shadow: var(--uatm-shadow);
+}
+
+.uatm-kpi__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--uatm-text-muted);
+    margin-bottom: 8px;
+}
+
+.uatm-kpi__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--uatm-text);
+    line-height: 1;
+}
+
+/* ——— Accès rapide ——— */
+.uatm-quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.uatm-quick-link {
+    display: block;
+    padding: 16px 18px;
+    background: var(--uatm-surface);
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    text-decoration: none;
+    color: var(--uatm-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease;
+}
+
+.uatm-quick-link:hover {
+    border-color: var(--uatm-primary);
+    color: var(--uatm-primary);
+}
+
+/* ——— Pagination ——— */
+.uatm-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 16px;
+    border-top: 1px solid var(--uatm-border);
+    background: #FAFAFA;
+}
+
+.uatm-pagination a,
+.uatm-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--uatm-primary);
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    background: var(--uatm-surface);
+}
+
+.uatm-pagination a:hover {
+    background: var(--uatm-primary);
+    color: #fff;
+    border-color: var(--uatm-primary);
+}
+
+.uatm-pagination .is-active {
+    background: var(--uatm-primary);
+    color: #fff;
+    border-color: var(--uatm-primary);
+}
+
+.uatm-pagination .is-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.uatm-pagination-info {
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--uatm-text-muted);
+    margin-bottom: 4px;
+}
+
+/* ——— États vides ——— */
+.uatm-empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--uatm-text-muted);
+}
+
+.uatm-empty__title {
+    font-size: 1.1rem;
+    color: var(--uatm-text);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* ——— Flash messages (complément) ——— */
+.uatm-flash {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: var(--uatm-radius);
+    font-size: 0.9rem;
+    border: 1px solid;
+}
+
+.uatm-flash--success {
+    background: #E8F5EE;
+    border-color: var(--uatm-success);
+    color: var(--uatm-success);
+}
+
+.uatm-flash--error {
+    background: #FCE8EA;
+    border-color: var(--uatm-accent);
+    color: var(--uatm-accent);
+}
+
+/* ——— Page détail mémoire ——— */
+.uatm-detail { max-width: 900px; }
+.uatm-detail .uatm-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--uatm-text-muted);
+    margin-bottom: 6px;
+    display: block;
+}
+.uatm-detail .uatm-value {
+    background: var(--uatm-surface);
+    border: 1px solid var(--uatm-border);
+    padding: 14px 16px;
+    border-radius: var(--uatm-radius);
+    margin-bottom: 16px;
+}
+.uatm-detail .uatm-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--uatm-text);
+    margin: 28px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--uatm-border);
+}
+.uatm-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--uatm-text-muted);
+    background: var(--uatm-surface);
+}
+.uatm-like-btn.is-liked {
+    background: var(--uatm-primary);
+    border-color: var(--uatm-primary);
+    color: #fff;
+}
+.uatm-pdf-frame {
+    border: 1px solid var(--uatm-border);
+    border-radius: var(--uatm-radius);
+    overflow: hidden;
+    height: 560px;
+    background: #333;
+}
+.uatm-comment-card {
+    border: 1px solid var(--uatm-border);
+    border-left: 3px solid var(--uatm-border);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: var(--uatm-surface);
+    border-radius: var(--uatm-radius);
+}
+.uatm-comment-card--de { border-left-color: var(--uatm-primary); }
+.uatm-comment-card--prof { border-left-color: var(--uatm-info); }
+.uatm-role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: var(--uatm-radius);
+    margin-left: 6px;
+}
+.uatm-role-badge--de { background: var(--uatm-primary); color: #fff; }
+.uatm-role-badge--prof { background: var(--uatm-info); color: #fff; }
+.uatm-role-badge--etudiant { background: #6C6C6C; color: #fff; }
+
+@media (max-width: 768px) {
+    .site-header {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 16px;
+    }
+
+    .site-header__logo {
+        height: 48px;
+    }
+
+    .uatm-form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .uatm-input {
+        width: 100%;
+    }
+}

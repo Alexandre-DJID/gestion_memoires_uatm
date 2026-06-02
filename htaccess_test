@@ -1,0 +1,32 @@
+# ============================================================================
+# SÉCURITÉ ABSOLUE - Fichier .htaccess Racine
+# Redirige TOUTES les requêtes vers le dossier /public (Front Controller)
+# ============================================================================
+
+# Activer la réécriture d'URL
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Forcer la redirection vers le dossier public/
+    # Cela empêche l'accès direct aux dossiers sensibles (app/, config/, core/)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(?!public/)(.*)$ public/$1 [L]
+</IfModule>
+
+# Bloquer l'accès au fichier .htaccess lui-même
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Bloquer les fichiers sensibles (configuration, base de données, git)
+<FilesMatch "^(config|core|app|\.env|\.git|\.sql|composer\.|package\.)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Sécurité supplémentaire : Désactiver l'exécution de scripts PHP en dehors de /public
+<Directory ~"^(?!.*public)">
+    php_flag engine off
+</Directory>
