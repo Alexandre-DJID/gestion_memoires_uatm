@@ -23,8 +23,8 @@ ob_start();
                             <td><?php $statut_id = $memoire['id_statut'] ?? 1; require APP_PATH . '/views/partials/status_badge.php'; ?></td>
                             <td><?= (new DateTime($memoire['date_depot']))->format('d/m/Y'); ?></td>
                             <td>
-                                <a href="/gestion_memoires_uatm/public/memoires/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-outline btn-sm">Consulter</a>
-                                <a href="/gestion_memoires_uatm/public/memoires/telecharger/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-primary btn-sm">Télécharger</a>
+                                <a href="<?= BASE_URL ?>/memoires/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-outline btn-sm">Consulter</a>
+                                <a href="<?= BASE_URL ?>/memoires/telecharger/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-primary btn-sm">Télécharger</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -35,7 +35,7 @@ ob_start();
         <div class="card">
             <p><strong>Aucun dépôt</strong></p>
             <p>Vous n'avez pas encore déposé de mémoire.</p>
-            <a href="/gestion_memoires_uatm/public/memoires/creer" class="btn btn-primary">Déposer un mémoire</a>
+            <a href="<?= BASE_URL ?>/memoires/creer" class="btn btn-primary">Déposer un mémoire</a>
         </div>
     <?php endif; ?>
 </div>
@@ -44,5 +44,5 @@ ob_start();
 $content = ob_get_clean();
 $pageTitle = 'Mes dépôts';
 $pageSubtitle = 'Vos mémoires soumis sur la plateforme.';
-$page_css = ['/gestion_memoires_uatm/public/assets/css/consulter.css'];
+$page_css = [BASE_URL . '/assets/css/consulter.css'];
 require_once APP_PATH . '/views/layouts/main.php';

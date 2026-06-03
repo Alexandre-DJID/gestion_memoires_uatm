@@ -12,10 +12,14 @@ ob_start();
         <p><?= htmlspecialchars(trim(($memoire['prenom'] ?? '') . ' ' . ($memoire['nom'] ?? '')), ENT_QUOTES, 'UTF-8'); ?> &nbsp;&nbsp; <?= htmlspecialchars(!empty($memoire['date_depot']) ? (new DateTime($memoire['date_depot']))->format('Y') : '', ENT_QUOTES, 'UTF-8'); ?></p>
         <p style="margin-top:4px;">Statut actuel : <?php $statut_id = (int) ($memoire['id_statut'] ?? 0); require APP_PATH . '/views/partials/status_badge.php'; ?></p>
         <div class="memoire-actions">
-            <div class="like-chip<?= !empty($user_has_liked) ? ' active' : ''; ?>">
-                <div class="puce">👍</div>
+            <a href="<?= BASE_URL ?>/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/like" class="like-chip<?= !empty($user_has_liked) ? ' active' : ''; ?>" aria-label="J'aime">
+                <?php if (!empty($user_has_liked)): ?>
+                    <i class="fas fa-heart" style="color:#dc3545;font-size:20px;"></i>
+                <?php else: ?>
+                    <i class="far fa-heart" style="font-size:20px;"></i>
+                <?php endif; ?>
                 <span><?= (int) ($memoire['nb_likes'] ?? 0); ?></span>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -30,7 +34,7 @@ ob_start();
             <div class="table-wrapper">
                 <table>
                     <thead>
-                        <tr><th>Nom</th><th>Prénom</th><th>Rôle</th></tr>
+                        <tr><th>Nom</th><th>Prénom</th><th>Rôle</th><?php if (($_SESSION['user_type'] ?? '') === 'de'): ?><th>Action</th><?php endif; ?></tr>
                     </thead>
                     <tbody>
                         <?php foreach ($jury_actuel as $membre): ?>
@@ -38,6 +42,13 @@ ob_start();
                                 <td><?= htmlspecialchars($membre['nom'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?= htmlspecialchars($membre['prenom'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?= htmlspecialchars($membre['role'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <?php if (($_SESSION['user_type'] ?? '') === 'de'): ?>
+                                    <td>
+                                        <a href="<?= BASE_URL ?>/memoires/<?= (int) $memoire['id_memoire']; ?>/jury/delete/<?= (int) $membre['id_user']; ?>" class="btn btn-danger btn-sm" title="Supprimer du jury" onclick="return confirm('Confirmer la suppression du membre du jury ?');">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -51,7 +62,7 @@ ob_start();
     <?php if (($_SESSION['user_type'] ?? '') === 'de'): ?>
         <div class="card" style="margin-top:16px;">
             <div class="card-header"><h3 class="card-title">Assigner un membre au jury</h3></div>
-            <form method="POST" action="/gestion_memoires_uatm/public/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/assigner-jury">
+            <form method="POST" action="<?= BASE_URL ?>/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/assigner-jury">
                 <div class="grid-2" style="gap:16px; margin-top:16px;">
                     <div>
                         <label class="form-label" for="id_prof">Professeur</label>
@@ -77,31 +88,36 @@ ob_start();
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($can_access_file)): ?>
-        <div class="card" style="margin-top:20px;">
-            <a href="/gestion_memoires_uatm/public/memoires/telecharger/<?= (int) ($memoire['id_memoire'] ?? 0); ?>" class="btn btn-primary">Télécharger le document</a>
-            <div class="memoire-card" style="margin-top:16px; padding:20px;">
-                <?php $cheminFichier = $memoire['fichier_path'] ?? ''; $extension = strtolower(pathinfo($cheminFichier, PATHINFO_EXTENSION)); ?>
-                <?php if ($extension === 'pdf'): ?>
-                    <iframe src="<?= htmlspecialchars($cheminFichier, ENT_QUOTES, 'UTF-8'); ?>" width="100%" height="520" style="border:none;border-radius:8px;"></iframe>
-                <?php else: ?>
-                    <div style="color:var(--gris-texte);text-align:center;padding:60px 0;">
-                        <p>Document Word — prévisualisation indisponible.</p>
-                        <p>Utilisez le bouton de téléchargement.</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    <?php else: ?>
-        <div class="card" style="margin-top:20px;">
+    <div class="card" style="margin-top:20px;">
+        <?php $cheminFichier = $memoire['fichier_path'] ?? ''; $extension = strtolower(pathinfo($cheminFichier, PATHINFO_EXTENSION)); ?>
+        <?php if (!empty($can_preview)): ?>
+            <?php if (!empty($can_download)): ?>
+                <div style="margin-bottom:16px;">
+                    <a href="<?= BASE_URL ?>/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/fichier?action=download" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Télécharger le document complet
+                    </a>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($extension === 'pdf'): ?>
+                <iframe src="<?= BASE_URL ?>/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/fichier?action=preview#toolbar=0" width="100%" height="600px" style="border: 1px solid #ddd; border-radius: 8px;"></iframe>
+            <?php else: ?>
+                <div style="color:var(--gris-texte);text-align:center;padding:60px 0;">
+                    <p>Prévisualisation indisponible pour ce format.</p>
+                    <?php if (!empty($can_download)): ?>
+                        <p>Utilisez le bouton de téléchargement pour accéder au document.</p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
             <p>Le fichier de ce mémoire est réservé à l'auteur, son jury et la direction.</p>
-        </div>
-    <?php endif; ?>
+        <?php endif; ?>
+    </div>
 
     <div class="card" style="margin-top:20px;">
-        <div class="card-header"><h3 class="card-title">Espace de discussion</h3></div>
+        <div class="card-header"><h3 class="card-title">Retours et discussions</h3></div>
         <?php if (isset($_SESSION['user_id'])): ?>
-            <form method="POST" action="/gestion_memoires_uatm/public/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/commenter" style="margin-bottom:20px;">
+            <form method="POST" action="<?= BASE_URL ?>/memoires/<?= (int) ($memoire['id_memoire'] ?? 0); ?>/commenter" style="margin-bottom:20px;">
                 <textarea name="contenu" class="form-control" required placeholder="Votre message..."></textarea>
                 <button type="submit" class="btn btn-primary" style="margin-top:12px;">Publier</button>
             </form>
@@ -133,5 +149,5 @@ ob_start();
 $content = ob_get_clean();
 $pageTitle = 'Détail du mémoire';
 $pageSubtitle = 'Informations détaillées, jury et discussions associées.';
-$page_css = ['/gestion_memoires_uatm/public/assets/css/consulter.css'];
+$page_css = [BASE_URL . '/assets/css/consulter.css'];
 require_once APP_PATH . '/views/layouts/main.php';

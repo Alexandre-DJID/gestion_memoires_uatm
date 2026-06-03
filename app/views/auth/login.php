@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - <?php echo htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="/gestion_memoires_uatm/public/css/institutional.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/institutional.css">
     <style>
         body.uatm-login {
             display: flex;
@@ -39,7 +39,7 @@
 </head>
 <body class="uatm-body uatm-login">
     <div class="login-box">
-        <img src="/gestion_memoires_uatm/public/assets/images/logo-uatm.png" alt="UATM" class="login-logo">
+        <img src="<?= BASE_URL ?>/assets/images/logo-uatm.png" alt="UATM" class="login-logo">
         <h1 class="login-title">Connexion</h1>
         <p class="login-subtitle"><?php echo htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8'); ?></p>
 
@@ -47,7 +47,7 @@
             <div class="login-error"><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></div>
         <?php endif; ?>
 
-        <form action="/gestion_memoires_uatm/public/login" method="POST">
+        <form action="<?= BASE_URL ?>/login" method="POST">
             <div class="login-field">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" class="uatm-input" style="width:100%;" placeholder="votre@email.com" required autofocus>

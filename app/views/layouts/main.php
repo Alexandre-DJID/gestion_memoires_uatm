@@ -3,7 +3,7 @@ $pageTitle = $pageTitle ?? APP_NAME;
 $pageSubtitle = $pageSubtitle ?? '';
 $page_css = $page_css ?? [];
 $page_js = $page_js ?? [];
-$baseUrl = '/gestion_memoires_uatm/public';
+$baseUrl = BASE_URL;
 
 function activeClass(string $path): string
 {
@@ -20,6 +20,7 @@ function activeClass(string $path): string
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?> - <?= htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8'); ?></title>
     <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/global.css">
     <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <?php foreach ($page_css as $css): ?>
         <link rel="stylesheet" href="<?= htmlspecialchars($css, ENT_QUOTES, 'UTF-8'); ?>">
     <?php endforeach; ?>
@@ -32,9 +33,22 @@ function activeClass(string $path): string
             <div class="sidebar-section-title">Navigation</div>
             <a href="<?= $baseUrl ?>/dashboard" class="<?= activeClass('/dashboard'); ?>">Tableau de bord</a>
             <a href="<?= $baseUrl ?>/memoires" class="<?= activeClass('/memoires'); ?>">Mémoires</a>
-            <a href="<?= $baseUrl ?>/mes-depots" class="<?= activeClass('/mes-depots'); ?>">Mes dépôts</a>
-            <a href="<?= $baseUrl ?>/mes-evaluations" class="<?= activeClass('/mes-evaluations'); ?>">Mes évaluations</a>
-            <a href="<?= $baseUrl ?>/memoires/creer" class="<?= activeClass('/memoires/creer'); ?>">Déposer un mémoire</a>
+            <?php if (($_SESSION['user_type'] ?? '') === 'etudiant'): ?>
+                <?php require_once APP_PATH . '/models/Utilisateur.php'; ?>
+                <?php $can_deposit = Utilisateur::canDeposit((int) $_SESSION['user_id']); ?>
+                <?php if ($can_deposit): ?>
+                    <a href="<?= $baseUrl ?>/mes-depots" class="<?= activeClass('/mes-depots'); ?>">Mes dépôts</a>
+                    <a href="<?= $baseUrl ?>/memoires/creer" class="<?= activeClass('/memoires/creer'); ?>">Déposer un mémoire</a>
+                <?php endif; ?>
+            <?php endif; ?>
+            <?php if (($_SESSION['user_type'] ?? '') === 'professeur'): ?>
+                <a href="<?= $baseUrl ?>/mes-evaluations" class="<?= activeClass('/mes-evaluations'); ?>">Mes évaluations</a>
+            <?php endif; ?>
+            <?php if (($_SESSION['user_type'] ?? '') === 'de'): ?>
+                <a href="<?= $baseUrl ?>/admin/parametres" class="<?= activeClass('/admin/parametres'); ?>">Paramètres</a>
+                <a href="<?= $baseUrl ?>/admin/utilisateurs/create" class="<?= activeClass('/admin/utilisateurs'); ?>">Ajouter utilisateur</a>
+                <a href="<?= $baseUrl ?>/admin/memoires/import" class="<?= activeClass('/admin/memoires'); ?>">Importer mémoires</a>
+            <?php endif; ?>
             <a href="<?= $baseUrl ?>/profil" class="<?= activeClass('/profil'); ?>">Mon profil</a>
             <div class="sidebar-logout">
                 <a href="<?= $baseUrl ?>/logout" class="btn btn-ghost btn-sm">Déconnexion</a>

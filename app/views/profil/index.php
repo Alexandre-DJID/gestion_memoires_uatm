@@ -7,7 +7,7 @@ ob_start();
 <div class="grid-2" style="gap:24px;">
     <div class="card">
         <h2 class="card-title">Informations personnelles</h2>
-        <form method="POST" action="/gestion_memoires_uatm/public/profil/update-info">
+        <form method="POST" action="<?= BASE_URL ?>/profil/update-info">
             <div class="form-group">
                 <label class="form-label" for="nom">Nom</label>
                 <input id="nom" name="nom" type="text" class="form-control" required maxlength="100" value="<?= htmlspecialchars($utilisateur['nom'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
@@ -26,7 +26,7 @@ ob_start();
 
     <div class="card">
         <h2 class="card-title">Sécurité du compte</h2>
-        <form method="POST" action="/gestion_memoires_uatm/public/profil/update-password">
+        <form method="POST" action="<?= BASE_URL ?>/profil/update-password">
             <div class="form-group">
                 <label class="form-label" for="old_password">Ancien mot de passe</label>
                 <input id="old_password" name="old_password" type="password" class="form-control" required autocomplete="current-password">

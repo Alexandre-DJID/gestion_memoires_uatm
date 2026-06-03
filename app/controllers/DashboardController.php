@@ -20,7 +20,7 @@ class DashboardController
     public function index()
     {
         if (!isset($_SESSION['user_id']) || !isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 

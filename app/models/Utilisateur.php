@@ -124,4 +124,88 @@ class Utilisateur
             return false;
         }
     }
+
+    /**
+     * Crée un nouvel utilisateur avec son type spécifique.
+     *
+     * @param string $nom
+     * @param string $prenom
+     * @param string $email
+     * @param string $mot_de_passe Doit être hashé via password_hash()
+     * @param string $type_utilisateur ('etudiant', 'professeur', 'de')
+     * @param array $extra_data Données supplémentaires (matricule, grade, etc.)
+     * @return int|false ID du nouvel utilisateur ou false
+     */
+    public static function create($nom, $prenom, $email, $mot_de_passe, $type_utilisateur, $extra_data = [])
+    {
+        try {
+            $pdo = Database::getInstance()->getConnection();
+
+            // Démarrer une transaction
+            $pdo->beginTransaction();
+
+            // Insérer dans utilisateur
+            $sql = 'INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, type_utilisateur) 
+                    VALUES (:nom, :prenom, :email, :mot_de_passe, :type)';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':nom' => $nom,
+                ':prenom' => $prenom,
+                ':email' => $email,
+                ':mot_de_passe' => $mot_de_passe,
+                ':type' => $type_utilisateur,
+            ]);
+
+            $id_user = (int) $pdo->lastInsertId();
+
+            // Insérer dans la table spécialisée selon le type
+            if ($type_utilisateur === 'etudiant') {
+                $matricule = $extra_data['matricule'] ?? 'AUTO_' . $id_user;
+                $sql = 'INSERT INTO etudiant (id_user, matricule) VALUES (:id_user, :matricule)';
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([':id_user' => $id_user, ':matricule' => $matricule]);
+            } elseif ($type_utilisateur === 'professeur') {
+                $grade = $extra_data['grade'] ?? 'Maître-assistant';
+                $sql = 'INSERT INTO professeur (id_user, grade) VALUES (:id_user, :grade)';
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([':id_user' => $id_user, ':grade' => $grade]);
+            } elseif ($type_utilisateur === 'de') {
+                $sql = 'INSERT INTO de (id_user) VALUES (:id_user)';
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([':id_user' => $id_user]);
+            }
+
+            $pdo->commit();
+            return $id_user;
+        } catch (\PDOException $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log('Erreur création utilisateur: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Vérifie si un étudiant peut déposer un mémoire (L3 ou M2).
+     *
+     * @param int $id_user ID de l'utilisateur
+     * @return bool
+     */
+    public static function canDeposit($id_user): bool
+    {
+        try {
+            $pdo = Database::getInstance()->getConnection();
+            // Récupérer l'inscription active (L3 ou M2 : id 3 ou 5)
+            $sql = 'SELECT COUNT(*) FROM inscription 
+                    WHERE id_user = :id_user AND id_niveau IN (3, 5)
+                    ORDER BY date_inscription DESC LIMIT 1';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':id_user' => $id_user]);
+            return (bool) $stmt->fetchColumn();
+        } catch (\PDOException $e) {
+            error_log('Erreur canDeposit: ' . $e->getMessage());
+            return false;
+        }
+    }
 }

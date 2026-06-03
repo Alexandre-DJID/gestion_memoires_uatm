@@ -5,7 +5,7 @@
 ob_start();
 ?>
 <div class="card" style="max-width:760px; margin:auto;">
-    <form method="POST" action="/gestion_memoires_uatm/public/memoires/creer" enctype="multipart/form-data">
+    <form method="POST" action="<?= BASE_URL ?>/memoires/creer" enctype="multipart/form-data">
         <div class="form-group">
             <label class="form-label" for="theme">Titre du mémoire *</label>
             <input id="theme" name="theme" type="text" class="form-control" required maxlength="512" placeholder="Thème de votre mémoire">
@@ -14,6 +14,35 @@ ob_start();
         <div class="form-group">
             <label class="form-label" for="resume">Résumé *</label>
             <textarea id="resume" name="resume" class="form-control" required placeholder="Résumé du mémoire"></textarea>
+        </div>
+
+        <div class="grid-2" style="gap:16px;">
+            <div class="form-group">
+                <label class="form-label" for="filiere">Filière</label>
+                <select id="filiere" name="filiere" class="form-control">
+                    <option value="">Sélectionnez une filière</option>
+                    <?php foreach ($filieres ?? [] as $f): ?>
+                        <option value="<?= htmlspecialchars($f['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" 
+                            <?php if (!empty($inscription) && isset($inscription['filiere_libelle']) && $inscription['filiere_libelle'] === $f['libelle']): ?>selected<?php endif; ?>>
+                            <?= htmlspecialchars($f['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <small style="color:#666;">Pré-rempli selon votre inscription.</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="centre">Centre</label>
+                <select id="centre" name="centre" class="form-control">
+                    <option value="">Sélectionnez un centre</option>
+                    <?php foreach ($centres ?? [] as $c): ?>
+                        <option value="<?= htmlspecialchars($c['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" 
+                            <?php if (!empty($inscription) && isset($inscription['centre_libelle']) && $inscription['centre_libelle'] === $c['libelle']): ?>selected<?php endif; ?>>
+                            <?= htmlspecialchars($c['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <small style="color:#666;">Pré-rempli selon votre inscription.</small>
+            </div>
         </div>
 
         <div class="form-group">
@@ -33,7 +62,7 @@ ob_start();
 
         <div class="flex gap-md" style="flex-wrap:wrap; margin-top:16px;">
             <button type="submit" class="btn btn-primary">Déposer</button>
-            <a href="/gestion_memoires_uatm/public/memoires" class="btn btn-outline">Annuler</a>
+            <a href="<?= BASE_URL ?>/memoires" class="btn btn-outline">Annuler</a>
         </div>
     </form>
 </div>
@@ -42,5 +71,5 @@ ob_start();
 $content = ob_get_clean();
 $pageTitle = 'Déposer un mémoire';
 $pageSubtitle = 'Soumettez votre document et désignez votre maître de mémoire.';
-$page_css = ['/gestion_memoires_uatm/public/assets/css/upload.css'];
+$page_css = [BASE_URL . '/assets/css/upload.css'];
 require_once APP_PATH . '/views/layouts/main.php';

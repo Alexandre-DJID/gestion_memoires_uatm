@@ -19,32 +19,60 @@ class Memoire
      * @param int $offset Décalage SQL
      * @return array Tableau des mémoires ou tableau vide
      */
-    public static function search($keyword = '', $id_statut = '', $limit = 10, $offset = 0)
+    public static function search($mot_cle = '', $id_statut = '', $filiere = '', $annee = '', $centre = '', $limit = 10, $offset = 0)
     {
         try {
             $pdo = Database::getInstance()->getConnection();
+            $databaseName = $pdo->query('SELECT DATABASE()')->fetchColumn();
 
-            $sql = 'SELECT m.*, d.id_user AS id_auteur, s.libelle AS statut_libelle
+            $hasFiliere = self::hasColumn($pdo, $databaseName, 'memoire', 'filiere');
+            $hasAnnee = self::hasColumn($pdo, $databaseName, 'memoire', 'annee');
+            $hasCentre = self::hasColumn($pdo, $databaseName, 'memoire', 'centre');
+
+            $sql = 'SELECT DISTINCT m.*, d.id_user AS id_auteur, s.libelle AS statut_libelle,
+                           auteur.nom AS auteur_nom, auteur.prenom AS auteur_prenom,
+                           prof.nom AS prof_nom, prof.prenom AS prof_prenom
                     FROM memoire m
                     LEFT JOIN deposer d ON m.id_memoire = d.id_memoire
-                    JOIN statut_memoire s ON m.id_statut = s.id_statut
+                    LEFT JOIN utilisateur auteur ON d.id_user = auteur.id_user
+                    LEFT JOIN evaluer e ON m.id_memoire = e.id_memoire
+                    LEFT JOIN utilisateur prof ON e.id_user_prof = prof.id_user
+                    LEFT JOIN statut_memoire s ON m.id_statut = s.id_statut
                     WHERE 1=1';
 
-            if ($keyword !== '') {
-                $sql .= ' AND (m.theme LIKE :keyword OR m.resume LIKE :keyword)';
+            if ($mot_cle !== '') {
+                $sql .= ' AND (m.theme LIKE :mot OR m.resume LIKE :mot OR auteur.nom LIKE :mot OR auteur.prenom LIKE :mot OR prof.nom LIKE :mot OR prof.prenom LIKE :mot)';
             }
             if ($id_statut !== '' && $id_statut !== null) {
                 $sql .= ' AND m.id_statut = :statut';
+            }
+            if ($filiere !== '' && $hasFiliere) {
+                $sql .= ' AND m.filiere = :filiere';
+            }
+            if ($annee !== '' && $hasAnnee) {
+                $sql .= ' AND m.annee = :annee';
+            }
+            if ($centre !== '' && $hasCentre) {
+                $sql .= ' AND m.centre = :centre';
             }
 
             $sql .= ' ORDER BY m.id_memoire DESC LIMIT :limit OFFSET :offset';
             $stmt = $pdo->prepare($sql);
 
-            if ($keyword !== '') {
-                $stmt->bindValue(':keyword', '%' . $keyword . '%', \PDO::PARAM_STR);
+            if ($mot_cle !== '') {
+                $stmt->bindValue(':mot', '%' . $mot_cle . '%', \PDO::PARAM_STR);
             }
             if ($id_statut !== '' && $id_statut !== null) {
                 $stmt->bindValue(':statut', (int) $id_statut, \PDO::PARAM_INT);
+            }
+            if ($filiere !== '' && $hasFiliere) {
+                $stmt->bindValue(':filiere', $filiere, \PDO::PARAM_STR);
+            }
+            if ($annee !== '' && $hasAnnee) {
+                $stmt->bindValue(':annee', $annee, \PDO::PARAM_STR);
+            }
+            if ($centre !== '' && $hasCentre) {
+                $stmt->bindValue(':centre', $centre, \PDO::PARAM_STR);
             }
 
             $stmt->bindValue(':limit', (int) $limit, \PDO::PARAM_INT);
@@ -68,27 +96,55 @@ class Memoire
      * @param string|int $id_statut ID du statut (vide = tous)
      * @return int
      */
-    public static function countSearchResults($keyword = '', $id_statut = '')
+    public static function countSearchResults($mot_cle = '', $id_statut = '', $filiere = '', $annee = '', $centre = '')
     {
         try {
             $pdo = Database::getInstance()->getConnection();
+            $databaseName = $pdo->query('SELECT DATABASE()')->fetchColumn();
 
-            $sql = 'SELECT COUNT(m.id_memoire) FROM memoire m WHERE 1=1';
+            $hasFiliere = self::hasColumn($pdo, $databaseName, 'memoire', 'filiere');
+            $hasAnnee = self::hasColumn($pdo, $databaseName, 'memoire', 'annee');
+            $hasCentre = self::hasColumn($pdo, $databaseName, 'memoire', 'centre');
 
-            if ($keyword !== '') {
-                $sql .= ' AND (m.theme LIKE :keyword OR m.resume LIKE :keyword)';
+            $sql = 'SELECT COUNT(DISTINCT m.id_memoire) FROM memoire m
+                    LEFT JOIN deposer d ON m.id_memoire = d.id_memoire
+                    LEFT JOIN utilisateur auteur ON d.id_user = auteur.id_user
+                    LEFT JOIN evaluer e ON m.id_memoire = e.id_memoire
+                    LEFT JOIN utilisateur prof ON e.id_user_prof = prof.id_user
+                    WHERE 1=1';
+
+            if ($mot_cle !== '') {
+                $sql .= ' AND (m.theme LIKE :mot OR m.resume LIKE :mot OR auteur.nom LIKE :mot OR auteur.prenom LIKE :mot OR prof.nom LIKE :mot OR prof.prenom LIKE :mot)';
             }
             if ($id_statut !== '' && $id_statut !== null) {
                 $sql .= ' AND m.id_statut = :statut';
             }
+            if ($filiere !== '' && $hasFiliere) {
+                $sql .= ' AND m.filiere = :filiere';
+            }
+            if ($annee !== '' && $hasAnnee) {
+                $sql .= ' AND m.annee = :annee';
+            }
+            if ($centre !== '' && $hasCentre) {
+                $sql .= ' AND m.centre = :centre';
+            }
 
             $stmt = $pdo->prepare($sql);
 
-            if ($keyword !== '') {
-                $stmt->bindValue(':keyword', '%' . $keyword . '%', \PDO::PARAM_STR);
+            if ($mot_cle !== '') {
+                $stmt->bindValue(':mot', '%' . $mot_cle . '%', \PDO::PARAM_STR);
             }
             if ($id_statut !== '' && $id_statut !== null) {
                 $stmt->bindValue(':statut', (int) $id_statut, \PDO::PARAM_INT);
+            }
+            if ($filiere !== '' && $hasFiliere) {
+                $stmt->bindValue(':filiere', $filiere, \PDO::PARAM_STR);
+            }
+            if ($annee !== '' && $hasAnnee) {
+                $stmt->bindValue(':annee', $annee, \PDO::PARAM_STR);
+            }
+            if ($centre !== '' && $hasCentre) {
+                $stmt->bindValue(':centre', $centre, \PDO::PARAM_STR);
             }
 
             $stmt->execute();
@@ -139,9 +195,34 @@ class Memoire
             return false;
         }
     }
+
+    /**
+     * Vérifie si une colonne existe dans une table donnée.
+     *
+     * @param \PDO $pdo Instance PDO
+     * @param string $database Nom de la base de données
+     * @param string $table Nom de la table
+     * @param string $column Nom de la colonne
+     * @return bool
+     */
+    private static function hasColumn(\PDO $pdo, string $database, string $table, string $column): bool
+    {
+        try {
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = :schema AND TABLE_NAME = :table AND COLUMN_NAME = :column');
+            $stmt->execute([
+                ':schema' => $database,
+                ':table' => $table,
+                ':column' => $column,
+            ]);
+
+            return (bool) $stmt->fetchColumn();
+        } catch (\PDOException $e) {
+            return false;
+        }
+    }
     
     /**
-     * Crée un nouveau mémoire
+     * Récupère tous les mémoires avec recherche optionnelle
      * 
      * @param string $titre Titre du mémoire
      * @param string $resume Résumé du mémoire

@@ -26,6 +26,8 @@ define('APP_PATH', BASE_PATH . '/app');
 define('CORE_PATH', BASE_PATH . '/core');
 define('PUBLIC_PATH', __DIR__);
 
+define('BASE_URL', rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/'));
+
 // ============================================================================
 // 2. CHARGEMENT DE LA CONFIGURATION
 // ============================================================================
@@ -145,7 +147,18 @@ try {
     $router->get('/mes-depots', 'MemoireController@mesDepots');
     $router->get('/mes-evaluations', 'MemoireController@mesEvaluations');
     $router->get('/memoires/:id/like', 'MemoireController@like');
+    $router->get('/memoires/:id/fichier', 'MemoireController@serveFichier');
+    $router->get('/memoires/:id/jury/delete/:id_prof', 'MemoireController@removeJury');
     $router->get('/memoires/:id', 'MemoireController@show');
+
+    // Routes admin Direction des études
+    $router->get('/admin/parametres', 'AdminController@parametres');
+    $router->post('/admin/filiere/add', 'AdminController@addFiliere');
+    $router->get('/admin/filiere/delete/:id', 'AdminController@deleteFiliere');
+    $router->get('/admin/utilisateurs/create', 'UserController@create');
+    $router->post('/admin/utilisateurs/store', 'UserController@store');
+    $router->get('/admin/memoires/import', 'AdminController@importMemoires');
+    $router->post('/admin/memoires/import-process', 'AdminController@importMemoiresProcess');
     
     // Routes de test
     $router->get('/test', 'HomeController@test');

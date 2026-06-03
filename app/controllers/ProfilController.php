@@ -17,7 +17,7 @@ class ProfilController
     public function index()
     {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -26,7 +26,7 @@ class ProfilController
         $utilisateur = Utilisateur::getUserById((int) $_SESSION['user_id']);
         if ($utilisateur === false) {
             $_SESSION['flash_error'] = 'Utilisateur introuvable.';
-            header('Location: /gestion_memoires_uatm/public/dashboard');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit();
         }
 
@@ -41,7 +41,7 @@ class ProfilController
     public function updateInfo()
     {
         if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -52,7 +52,7 @@ class ProfilController
 
         if ($nom === '' || $prenom === '') {
             $_SESSION['flash_error'] = 'Le nom et le prénom sont obligatoires.';
-            header('Location: /gestion_memoires_uatm/public/profil');
+            header('Location: ' . BASE_URL . '/profil');
             exit();
         }
 
@@ -66,7 +66,7 @@ class ProfilController
             $_SESSION['flash_error'] = 'Erreur lors de la mise à jour de vos informations.';
         }
 
-        header('Location: /gestion_memoires_uatm/public/profil');
+        header('Location: ' . BASE_URL . '/profil');
         exit();
     }
 
@@ -78,7 +78,7 @@ class ProfilController
     public function updatePassword()
     {
         if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -93,25 +93,25 @@ class ProfilController
 
         if ($utilisateur === false) {
             $_SESSION['flash_error'] = 'Utilisateur introuvable.';
-            header('Location: /gestion_memoires_uatm/public/profil');
+            header('Location: ' . BASE_URL . '/profil');
             exit();
         }
 
         if (!password_verify($old_password, $utilisateur['mot_de_passe'])) {
             $_SESSION['flash_error'] = 'L\'ancien mot de passe est incorrect.';
-            header('Location: /gestion_memoires_uatm/public/profil');
+            header('Location: ' . BASE_URL . '/profil');
             exit();
         }
 
         if ($new_password !== $confirm_password) {
             $_SESSION['flash_error'] = 'Les nouveaux mots de passe ne correspondent pas.';
-            header('Location: /gestion_memoires_uatm/public/profil');
+            header('Location: ' . BASE_URL . '/profil');
             exit();
         }
 
         if (strlen($new_password) < 6) {
             $_SESSION['flash_error'] = 'Le nouveau mot de passe doit contenir au moins 6 caractères.';
-            header('Location: /gestion_memoires_uatm/public/profil');
+            header('Location: ' . BASE_URL . '/profil');
             exit();
         }
 
@@ -123,7 +123,7 @@ class ProfilController
             $_SESSION['flash_error'] = 'Erreur lors de la modification du mot de passe.';
         }
 
-        header('Location: /gestion_memoires_uatm/public/profil');
+        header('Location: ' . BASE_URL . '/profil');
         exit();
     }
 }

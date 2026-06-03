@@ -6,27 +6,27 @@ ob_start();
         <h2>Bienvenue <?= htmlspecialchars($_SESSION['user_prenom'] ?? '', ENT_QUOTES, 'UTF-8'); ?></h2>
         <p>Suivez l'état de validation de vos mémoires et l'activité de votre jury.</p>
     </div>
-    <div class="welcome-icon">📝</div>
+    <div class="welcome-icon"><i class="fas fa-pen-nib" style="color:#6c757d; font-size:28px;"></i></div>
 </div>
 
 <section class="stats-grid">
     <article class="stat-card card">
-        <div class="stat-icon">📁</div>
+        <div class="stat-icon"><i class="fas fa-folder" style="color:#6c757d; font-size:24px;"></i></div>
         <div class="stat-number"><?= count($memoires); ?></div>
         <div class="stat-label">Mémoires soumis</div>
     </article>
     <article class="stat-card card">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"><i class="fas fa-check-circle" style="color:#28a745; font-size:24px;"></i></div>
         <div class="stat-number"><?= (int) ($stats['valide'] ?? 0); ?></div>
         <div class="stat-label">Validés</div>
     </article>
     <article class="stat-card card">
-        <div class="stat-icon">⏳</div>
+        <div class="stat-icon"><i class="fas fa-hourglass-half" style="color:#ffc107; font-size:24px;"></i></div>
         <div class="stat-number"><?= (int) ($stats['en_attente'] ?? 0); ?></div>
         <div class="stat-label">En attente</div>
     </article>
     <article class="stat-card card">
-        <div class="stat-icon">🚫</div>
+        <div class="stat-icon"><i class="fas fa-times-circle" style="color:#dc3545; font-size:24px;"></i></div>
         <div class="stat-number"><?= (int) ($stats['rejete'] ?? 0); ?></div>
         <div class="stat-label">Rejetés</div>
     </article>
@@ -53,7 +53,7 @@ ob_start();
                             <td><?= htmlspecialchars($memoire['theme'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php $statut_id = $memoire['id_statut'] ?? 1; require APP_PATH . '/views/partials/status_badge.php'; ?></td>
                             <td><?= (new DateTime($memoire['date_depot']))->format('d/m/Y'); ?></td>
-                            <td><a href="/gestion_memoires_uatm/public/memoires/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-primary btn-sm">Voir</a></td>
+                            <td><a href="<?= BASE_URL ?>/memoires/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-primary btn-sm">Voir</a></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -61,7 +61,7 @@ ob_start();
         </div>
     <?php else: ?>
         <p class="uatm-page-subtitle">Vous n'avez pas encore déposé de mémoire.</p>
-        <p><a href="/gestion_memoires_uatm/public/memoires/creer" class="btn btn-primary">Déposer un mémoire</a></p>
+        <p><a href="<?= BASE_URL ?>/memoires/creer" class="btn btn-primary">Déposer un mémoire</a></p>
     <?php endif; ?>
 </div>
 
@@ -69,5 +69,5 @@ ob_start();
 $content = ob_get_clean();
 $pageTitle = 'Tableau de bord Étudiant';
 $pageSubtitle = 'Visualisez l’état de validation de vos documents et accédez à votre dépôt.';
-$page_css = ['/gestion_memoires_uatm/public/assets/css/dashboard.css'];
+$page_css = [BASE_URL . '/assets/css/dashboard.css'];
 require_once APP_PATH . '/views/layouts/main.php';

@@ -5,20 +5,47 @@
 ob_start();
 ?>
 <div class="card">
-    <form method="GET" action="/gestion_memoires_uatm/public/memoires" class="search-bar">
-        <input type="text" name="q" class="form-control" placeholder="Rechercher par titre ou résumé..."
+    <form method="GET" action="<?= BASE_URL ?>/memoires" class="search-bar">
+        <input type="text" name="q" class="form-control" placeholder="Rechercher par thème, étudiant ou enseignant..."
                value="<?= htmlspecialchars($keyword ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-        <select name="statut" class="form-control" style="width:200px;">
-            <option value="">Tous les statuts</option>
-            <?php foreach ($liste_statuts ?? [] as $s): ?>
-                <option value="<?= (int) $s['id_statut']; ?>" <?= (isset($statut) && (string) $statut === (string) $s['id_statut']) ? 'selected' : ''; ?>>
-                    <?= htmlspecialchars($s['libelle'], ENT_QUOTES, 'UTF-8'); ?>
+        <?php if (($_SESSION['user_type'] ?? '') === 'de'): ?>
+            <select name="statut" class="form-control" style="width:200px;">
+                <option value="">Tous les statuts</option>
+                <?php foreach ($liste_statuts ?? [] as $s): ?>
+                    <option value="<?= (int) $s['id_statut']; ?>" <?= (isset($statut) && (string) $statut === (string) $s['id_statut']) ? 'selected' : ''; ?>>
+                        <?= htmlspecialchars($s['libelle'], ENT_QUOTES, 'UTF-8'); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+        <select name="filiere" class="form-control" style="width:200px;">
+            <option value="">Toutes les filières</option>
+            <?php foreach ($filieres ?? [] as $f): ?>
+                <option value="<?= htmlspecialchars($f['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" <?= (isset($filiere) && $filiere === ($f['libelle'] ?? '')) ? 'selected' : ''; ?>>
+                    <?= htmlspecialchars($f['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <select name="annee" class="form-control" style="width:200px;">
+            <option value="">Toutes les années</option>
+            <?php $optionsAnnee = ['2023', '2024', '2025', '2026']; ?>
+            <?php foreach ($optionsAnnee as $option): ?>
+                <option value="<?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8'); ?>" <?= (isset($annee) && $annee === $option) ? 'selected' : ''; ?>>
+                    <?= htmlspecialchars($option, ENT_QUOTES, 'UTF-8'); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <select name="centre" class="form-control" style="width:200px;">
+            <option value="">Tous les centres</option>
+            <?php foreach ($centres ?? [] as $c): ?>
+                <option value="<?= htmlspecialchars($c['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" <?= (isset($centre) && $centre === ($c['libelle'] ?? '')) ? 'selected' : ''; ?>>
+                    <?= htmlspecialchars($c['libelle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
                 </option>
             <?php endforeach; ?>
         </select>
         <button type="submit" class="btn btn-primary">Rechercher</button>
-        <?php if (!empty($keyword) || ($statut ?? '') !== ''): ?>
-            <a href="/gestion_memoires_uatm/public/memoires" class="btn btn-outline">Réinitialiser</a>
+        <?php if (!empty($keyword) || ($statut ?? '') !== '' || ($filiere ?? '') !== '' || ($annee ?? '') !== '' || ($centre ?? '') !== ''): ?>
+            <a href="<?= BASE_URL ?>/memoires" class="btn btn-outline">Réinitialiser</a>
         <?php endif; ?>
     </form>
 </div>
@@ -43,7 +70,7 @@ ob_start();
                         <td><?php $statut_id = $memoire['id_statut'] ?? 1; require APP_PATH . '/views/partials/status_badge.php'; ?></td>
                         <td><?= (new DateTime($memoire['date_depot']))->format('d/m/Y'); ?></td>
                         <td>
-                            <a href="/gestion_memoires_uatm/public/memoires/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-outline btn-sm">Consulter</a>
+                            <a href="<?= BASE_URL ?>/memoires/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-outline btn-sm">Consulter</a>
                             <?php
                             $is_de = (($_SESSION['user_type'] ?? '') === 'de');
                             $is_auteur = isset($_SESSION['user_id'], $memoire['id_auteur']) && (int) $_SESSION['user_id'] === (int) $memoire['id_auteur'];
@@ -51,7 +78,7 @@ ob_start();
                             $can_access_file = $is_de || $is_auteur || $is_prof_assigne;
                             ?>
                             <?php if ($can_access_file): ?>
-                                <a href="/gestion_memoires_uatm/public/memoires/telecharger/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-primary btn-sm">Télécharger</a>
+                                <a href="<?= BASE_URL ?>/memoires/telecharger/<?= (int) $memoire['id_memoire']; ?>" class="btn btn-primary btn-sm">Télécharger</a>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -85,7 +112,7 @@ ob_start();
             <?= $filtres_actifs ? 'Aucun mémoire ne correspond à vos critères de recherche.' : 'La plateforme ne contient actuellement aucun mémoire déposé.'; ?>
         </p>
         <?php if ($filtres_actifs): ?>
-            <a href="/gestion_memoires_uatm/public/memoires" class="btn btn-outline">Réinitialiser les filtres</a>
+            <a href="<?= BASE_URL ?>/memoires" class="btn btn-outline">Réinitialiser les filtres</a>
         <?php endif; ?>
     </div>
 <?php endif; ?>
@@ -94,5 +121,5 @@ ob_start();
 $content = ob_get_clean();
 $pageTitle = 'Liste des mémoires';
 $pageSubtitle = 'Consultation et gestion des mémoires déposés sur la plateforme.';
-$page_css = ['/gestion_memoires_uatm/public/assets/css/consulter.css'];
+$page_css = [BASE_URL . '/assets/css/consulter.css'];
 require_once APP_PATH . '/views/layouts/main.php';

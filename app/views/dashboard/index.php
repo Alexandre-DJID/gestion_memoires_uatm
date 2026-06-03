@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de Bord - <?php echo htmlspecialchars(APP_NAME, ENT_QUOTES, 'UTF-8'); ?></title>
-    <link rel="stylesheet" href="/gestion_memoires_uatm/public/css/institutional.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/institutional.css">
 </head>
 <body class="uatm-body">
     <?php require_once APP_PATH . '/views/partials/header_institutional.php'; ?>
@@ -86,7 +86,7 @@
                                         ?>
                                     </td>
                                     <td>
-                                        <a href="/gestion_memoires_uatm/public/memoires/<?php echo (int) $memoire['id_memoire']; ?>"
+                                        <a href="<?= BASE_URL ?>/memoires/<?php echo (int) $memoire['id_memoire']; ?>"
                                            class="uatm-btn uatm-btn-secondary">Voir</a>
                                     </td>
                                 </tr>
@@ -102,13 +102,13 @@
         <section class="uatm-card">
             <h2 class="uatm-page-title" style="font-size:1.15rem;margin-bottom:16px;">Accès rapide</h2>
             <div class="uatm-quick-grid">
-                <a href="/gestion_memoires_uatm/public/memoires" class="uatm-quick-link">Liste des mémoires</a>
+                <a href="<?= BASE_URL ?>/memoires" class="uatm-quick-link">Liste des mémoires</a>
                 <?php if (($user_type ?? '') === 'professeur'): ?>
-                    <a href="/gestion_memoires_uatm/public/mes-evaluations" class="uatm-quick-link">Mes évaluations</a>
+                    <a href="<?= BASE_URL ?>/mes-evaluations" class="uatm-quick-link">Mes évaluations</a>
                 <?php endif; ?>
-                <a href="/gestion_memoires_uatm/public/mes-depots" class="uatm-quick-link">Mes dépôts</a>
-                <a href="/gestion_memoires_uatm/public/memoires/creer" class="uatm-quick-link">Déposer un mémoire</a>
-                <a href="/gestion_memoires_uatm/public/profil" class="uatm-quick-link">Mon profil</a>
+                <a href="<?= BASE_URL ?>/mes-depots" class="uatm-quick-link">Mes dépôts</a>
+                <a href="<?= BASE_URL ?>/memoires/creer" class="uatm-quick-link">Déposer un mémoire</a>
+                <a href="<?= BASE_URL ?>/profil" class="uatm-quick-link">Mon profil</a>
             </div>
         </section>
     </main>

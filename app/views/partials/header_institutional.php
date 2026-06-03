@@ -18,7 +18,7 @@ $role_display = $roles_label[$header_user_type] ?? $header_user_type;
         <span></span><span></span><span></span>
     </button>
     <div class="navbar-brand">
-        <img src="/gestion_memoires_uatm/public/assets/images/logo-uatm.png" alt="UATM" />
+        <img src="<?= BASE_URL ?>/assets/images/logo-uatm.png" alt="UATM" />
         <div class="brand-text">UATM <span>Gestion des Mémoires</span></div>
     </div>
     <div class="navbar-user">

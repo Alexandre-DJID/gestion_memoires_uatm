@@ -36,7 +36,7 @@ class AuthController
     {
         // Vérifier que la requête est en POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -47,14 +47,14 @@ class AuthController
         // Valider les entrées
         if (empty($email) || empty($password)) {
             $_SESSION['auth_error'] = 'Email et mot de passe sont obligatoires.';
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
         // Valider le format de l'email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $_SESSION['auth_error'] = 'Format d\'email invalide.';
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -68,7 +68,7 @@ class AuthController
         if ($utilisateur === false) {
             $_SESSION['auth_error'] = 'Identifiants incorrects.';
             error_log('Tentative de connexion avec un email non trouvé: ' . $email);
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -76,7 +76,7 @@ class AuthController
         if (!password_verify($password, $utilisateur['mot_de_passe'])) {
             $_SESSION['auth_error'] = 'Identifiants incorrects.';
             error_log('Tentative de connexion avec un mot de passe incorrect pour: ' . $email);
-            header('Location: /gestion_memoires_uatm/public/login');
+            header('Location: ' . BASE_URL . '/login');
             exit();
         }
 
@@ -92,7 +92,7 @@ class AuthController
         error_log('Connexion réussie pour l\'utilisateur: ' . $email);
 
         // Rediriger vers le tableau de bord
-        header('Location: /gestion_memoires_uatm/public/dashboard');
+        header('Location: ' . BASE_URL . '/dashboard');
         exit();
     }
 
@@ -127,7 +127,7 @@ class AuthController
         error_log('Déconnexion utilisateur');
         
         // Rediriger vers la page de connexion
-        header('Location: /gestion_memoires_uatm/public/login');
+        header('Location: ' . BASE_URL . '/login');
         exit();
     }
 }
