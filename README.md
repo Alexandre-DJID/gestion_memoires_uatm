@@ -1,209 +1,68 @@
-# Plateforme de Gestion des Mémoires UATM
+# Plateforme de Gestion des Mémoires - UATM
 
-## Architecture
+## 1. Contexte du Projet
 
-Cette application suit une architecture MVC (Modèle-Vue-Contrôleur) vanilla sans framework.
+Ce projet a été réalisé dans le cadre de la formation en ingénierie logicielle (Filière Système Informatique et Logiciel - SIL) à l'UATM Gasa Formation. Il s'agit d'une application web conçue pour dématérialiser, centraliser et sécuriser le processus de dépôt, d'évaluation et d'archivage des mémoires de fin d'études au sein de l'établissement.
 
-```
+## 2. Architecture Logicielle
+
+Afin de démontrer une maîtrise approfondie des principes de conception logicielle, l'application repose sur une architecture **MVC (Modèle-Vue-Contrôleur) native**. Ce choix technique, réalisé sans l'utilisation de frameworks externes, garantit une séparation stricte des responsabilités (Separation of Concerns).
+
+```text
 gestion_memoires_uatm/
-├── app/
-│   ├── controllers/      # Logique métier et aiguillage des requêtes
-│   ├── models/           # Classes d'accès aux données (requêtes SQL)
-│   └── views/            # Templates HTML/CSS (pas de logique métier)
-├── config/               # Fichiers de configuration
-│   ├── app.php           # Configuration générale
-│   └── database.php      # Paramètres de connexion
-├── core/                 # Moteur de l'application
-│   └── Router.php        # Système de routage des URLs
-├── public/               # Point d'accès public (seul dossier accessible par le web)
-│   ├── index.php         # Front Controller (point d'entrée unique)
-│   ├── css/              # Feuilles de style CSS
-│   ├── js/               # Fichiers JavaScript
-│   └── uploads/          # Fichiers uploadés par les utilisateurs
-├── 01_create_tables.sql  # Script DDL de création de la base de données
-├── .htaccess             # Sécurité et redirection URL (racine)
-└── .gitignore            # Fichiers à ignorer par Git
+├── app/                  # Cœur de l'application (Logique métier)
+│   ├── controllers/      # Intermédiaires traitant les requêtes et reliant Modèles et Vues
+│   ├── models/           # Entités et abstraction de l'accès aux données (Requêtes SQL)
+│   └── views/            # Interfaces utilisateur organisées par modules (admin, auth, dashboard...)
+├── config/               # Fichiers de paramétrage (Variables globales, accès BD)
+├── core/                 # Moteur de base de l'application (Routeur principal, utilitaires)
+├── database/             # Scripts SQL de création et de gestion de la base de données
+├── public/               # Document Root (Seul point d'entrée exposé au réseau)
+│   ├── assets/           # Ressources statiques (CSS, JS, Images)
+│   ├── uploads/          # Stockage sécurisé des fichiers PDF soumis par les utilisateurs
+│   ├── index.php         # Front Controller interceptant toutes les requêtes
+│   └── .htaccess         # Règles de réécriture d'URL et politique de sécurité Apache
+├── DATABASE.md           # Documentation détaillée du schéma relationnel
+├── INFRASTRUCTURE.md     # Spécifications de déploiement
+└── README.md             # Présentation générale du projet
 ```
 
-## Sécurité
+## 3. Sécurité et Bonnes Pratiques
 
-### Principes appliqués
+Dans le respect des standards de développement web modernes, plusieurs mécanismes de sécurité ont été implémentés au cœur de l'application :
 
-1. **Pas d'accès direct aux fichiers PHP**: Seul `public/index.php` est accessible
-2. **Préparation des requêtes SQL**: Utilisation de PDO avec `prepare()` et `execute()` pour éviter les injections SQL
-3. **Échappement XSS**: Toute sortie HTML utilise `htmlspecialchars(ENT_QUOTES, 'UTF-8')`
-4. **Hachage des mots de passe**: `password_hash()` et `password_verify()`
-5. **Configuration centralisée**: Les paramètres sensibles dans `/config`
+* **Point d'entrée unique (Front Controller) :** L'accès direct aux fichiers PHP est bloqué. Le serveur web pointe exclusivement vers le répertoire `/public`. Le fichier `index.php` et le `.htaccess` se chargent de l'aiguillage.
+* **Prévention des Injections SQL :** L'interaction avec la base de données s'effectue via l'extension PDO (PHP Data Objects), avec une utilisation systématique des requêtes préparées (`prepare` et `execute`).
+* **Protection XSS (Cross-Site Scripting) :** Toutes les données affichées sur les interfaces clientes sont assainies au préalable via la fonction `htmlspecialchars(ENT_QUOTES, 'UTF-8')`.
+* **Cryptographie des mots de passe :** Les identifiants sont sécurisés en base de données grâce au hachage algorithmique natif de PHP (`password_hash` et `password_verify`).
 
-### Fichiers .htaccess
+## 4. Mécanisme de Routage
 
-- **Racine (`.htaccess`)**: Bloque l'accès aux dossiers sensibles et redirige vers `/public`
-- **Public (`public/.htaccess`)**: Redirige les requêtes vers `index.php` en passant l'URL en paramètre
+L'application intègre un routeur personnalisé capable d'extraire dynamiquement les paramètres des URL pour les transmettre aux contrôleurs correspondants.
 
-## Routage
+**Exemple de traitement d'une requête :**
+1. Le client effectue une requête vers `/memoires/afficher/12`.
+2. Le fichier `.htaccess` redirige la requête vers `public/index.php`.
+3. Le Routeur analyse l'URL, identifie la route correspondante et extrait l'identifiant (`12`).
+4. Le routeur instancie le `MemoireController` et fait appel à sa méthode `afficher($id)`.
 
-Les routes sont enregistrées dans `public/index.php` selon ce pattern:
+## 5. Conventions de Code
 
-```php
-$router->get('/memoires', 'MemoireController@lister');
-$router->post('/memoires/creer', 'MemoireController@creer');
-$router->get('/memoires/:id', 'MemoireController@afficher');
-```
+Afin d'assurer la maintenabilité et la lisibilité du code par l'équipe de développement, les standards de nommage suivants ont été adoptés :
+* **Classes (Contrôleurs, Modèles, Core)** : `PascalCase` (ex: `MemoireController.php`)
+* **Méthodes et propriétés** : `camelCase` (ex: `getMemoiresValides()`)
+* **Vues et colonnes SQL** : `snake_case` (ex: `memoire_detail.php`, `date_creation`)
 
-### Paramètres dynamiques
+## 6. Guide d'Installation (Environnement d'évaluation)
 
-Les paramètres dans l'URL (`:id`) sont extraits automatiquement et passés à la méthode du contrôleur:
+### Prérequis techniques
+* Serveur web Apache avec le module `mod_rewrite` activé.
+* PHP 8.0 ou supérieur.
+* SGBD MySQL ou MariaDB.
 
-```php
-// Route: /memoires/:id
-public function afficher($id)
-{
-    // $id contient la valeur depuis l'URL
-}
-```
-
-## Conventions de nommage
-
-- **Contrôleurs**: PascalCase (ex: `MemoireController.php`)
-- **Modèles**: PascalCase (ex: `Memoire.php`)
-- **Méthodes et variables**: camelCase (ex: `getMemoiresValides()`)
-- **Vues**: snake_case (ex: `memoire_detail.php`)
-- **Colonnes SQL**: snake_case (ex: `id_memoire`, `date_creation`)
-
-## Configuration
-
-### Base de données
-
-Modifier les paramètres dans `config/database.php`:
-
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'gestion_memoires');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-```
-
-### Application
-
-Les paramètres globaux se trouvent dans `config/app.php`:
-
-- `APP_DEBUG`: Mode debug (affiche les erreurs détaillées)
-- `APP_URL`: URL de base de l'application
-- `UPLOAD_DIR`: Dossier de stockage des fichiers
-- `MAX_FILE_SIZE`: Limite de taille des fichiers
-- `SESSION_TIMEOUT`: Durée de la session en secondes
-
-## Flux de requête
-
-1. L'utilisateur accède à une URL: `/memoires`
-2. Le `.htaccess` redirige vers `public/index.php?url=memoires`
-3. `public/index.php` charge la configuration et initialise le Router
-4. Le Router matching l'URL à une route enregistrée: `MemoireController@lister`
-5. Le contrôleur `MemoireController` appelle la méthode `lister()`
-6. La méthode récupère les données via les modèles (PDO)
-7. Affiche la vue HTML correspondante
-8. Les erreurs sont loggées et gérées globalement
-
-## Installation
-
-### Prérequis
-
-- PHP 8.0+
-- MySQL/MariaDB
-- Apache avec `mod_rewrite` activé
-
-### Étapes
-
-1. Cloner le projet dans `/opt/lampp/htdocs/gestion_memoires_uatm`
-2. Importer la base de données: `mysql -u root < 01_create_tables.sql`
-3. S'assurer que Apache peut écrire dans `public/uploads/`: `chmod 755 public/uploads/`
-4. Vérifier la configuration dans `config/database.php` et `config/app.php`
-5. Accéder à `http://localhost/gestion_memoires_uatm`
-
-## Structure d'un contrôleur
-
-```php
-<?php
-
-class MemoireController
-{
-    /**
-     * Liste les mémoires (GET)
-     */
-    public function lister()
-    {
-        // Récupérer les données du modèle
-        require_once APP_PATH . '/models/Memoire.php';
-        $memoireModel = new Memoire();
-        $memoires = $memoireModel->getAll();
-        
-        // Afficher la vue
-        require_once APP_PATH . '/views/memoire_liste.php';
-    }
-    
-    /**
-     * Affiche un mémoire (GET avec paramètre :id)
-     */
-    public function afficher($id)
-    {
-        // Validation et récupération
-        require_once APP_PATH . '/models/Memoire.php';
-        $memoireModel = new Memoire();
-        $memoire = $memoireModel->getById($id);
-        
-        if (!$memoire) {
-            http_response_code(404);
-            echo "Mémoire non trouvé";
-            return;
-        }
-        
-        // Afficher la vue
-        require_once APP_PATH . '/views/memoire_detail.php';
-    }
-    
-    /**
-     * Crée un mémoire (POST)
-     */
-    public function creer()
-    {
-        // Valider les données POST
-        // Créer le mémoire
-        // Rediriger
-    }
-}
-```
-
-## Gestion des erreurs
-
-Les erreurs sont gérées globalement dans `public/index.php`:
-
-- Exceptions non gérées
-- Erreurs PHP
-- Erreurs fatales
-
-En mode debug (`APP_DEBUG = true`), les détails sont affichés. En production, un message générique s'affiche et les détails sont loggés.
-
-## Logging
-
-Tous les événements importants sont loggés dans les fichiers de log du serveur:
-
-```
-error_log('Message d\'information');
-```
-
-## Notes de sécurité
-
-⚠️ **OBLIGATOIRE** avant la mise en production:
-
-1. [ ] Définir `APP_DEBUG = false`
-2. [ ] Utiliser des variables d'environnement pour les identifiants BD
-3. [ ] Configurer les headers de sécurité (HSTS, CSP, X-Frame-Options)
-4. [ ] Mettre en place un système d'authentification sécurisé
-5. [ ] Valider et nettoyer TOUTES les entrées utilisateur
-6. [ ] Utiliser HTTPS
-
----
-
-**Auteur**: Équipe de développement UATM  
-**Version**: 1.0.0  
-**Date**: 25 mai 2026
+### Procédure de déploiement local
+1. **Clonage :** Placer le répertoire du projet dans le dossier racine du serveur web local (ex: `htdocs` pour XAMPP).
+2. **Base de données :** Importer le script SQL de structure fourni dans le répertoire `/database` via phpMyAdmin ou en ligne de commande.
+3. **Configuration :** Éditer le fichier `config/database.php` pour y renseigner les identifiants de l'environnement local.
+4. **Droits d'accès :** S'assurer que le serveur web dispose des droits d'écriture sur le répertoire `public/uploads/memoires/`.
+5. **Lancement :** Accéder à l'application via le navigateur en ciblant le dossier public (ex: `http://localhost/gestion_memoires_uatm/public`).
